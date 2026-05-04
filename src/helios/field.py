@@ -19,12 +19,18 @@ Public field types:
 """
 from __future__ import annotations
 import struct
+from enum import Enum
 from typing import Any, Callable, Optional, Union
 
 from .ctx import Ctx, _resolve
 
 Buffer = Union[bytes, bytearray, memoryview, str]
 """Any input :meth:`Spec.parse` accepts. Bytes-like or a whitespace-tolerant hex string."""
+
+
+class FieldType(Enum):
+    RO_RQD = "RO RQD"
+    RO_OPT = "RO OPT"
 
 
 class Field:
@@ -52,7 +58,7 @@ class Field:
 
     def __init__(self, offset: Optional[int], size: int, *,
                  when: Optional[Callable[[Ctx], bool]] = None,
-                 doc: str = "") -> None:
+                 doc: str = "", ftype: FieldType = FieldType.RO_RQD) -> None:
         """Initializes a field descriptor.
 
         Args:
@@ -60,6 +66,7 @@ class Field:
             size: Number of bytes the field occupies. Zero for virtual fields.
             when: Optional predicate that gates decoding.
             doc: Optional human-readable description.
+            ftype: The type of data this field holds.
         """
         self.offset = offset
         self.size = size
@@ -67,6 +74,7 @@ class Field:
         self.doc = doc
         self.when = when
         self.unit: Optional[str] = None
+        self.ftype = ftype
 
     def __set_name__(self, owner, name: str) -> None:
         """Captures the attribute name when the field is bound to a :class:`Spec` subclass."""

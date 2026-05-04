@@ -127,17 +127,23 @@ class Spec:
         """
         cls = type(self)
         name_w = max((len(n) for n in cls._fields_), default=0)
+        raw_w = max(
+            [len("(computed)")]
+            + [4 + 2 * f.size for f in cls._fields_.values() if f.offset is not None]
+        )
         lines = [f"{cls.__name__}  ({len(self._raw)} bytes)"]
         for name, field in cls._fields_.items():
             v = self._values[name]
             unit = f" {field.unit}" if getattr(field, "unit", None) else ""
             if field.offset is None:
-                pos = "  --   "  # Computed: no byte position
+                pos = "    -- "
                 raw_hex = "(computed)"
             else:
                 pos = f"[{field.offset:3d}+{field.size}]"
                 raw_hex = f"raw={field.raw(self._raw).hex().upper()}"
-            v_str = "(skipped)" if v is None and field.when is not None \
-                else f"{v}{unit}"
-            lines.append(f"  {pos} {name:<{name_w}} = {v_str:<28} {raw_hex}")
+            v_str = "(skipped)" if v is None and field.when is not None else f"{v}{unit}"
+            lines.append(
+                f"  {pos} {field.ftype.value} {name:<{name_w}} "
+                f"= {v_str:<28} {raw_hex:<{raw_w}} doc={field.doc if field.doc != "" else "No doc"}"
+            )
         return "\n".join(lines)
