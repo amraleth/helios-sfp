@@ -2,7 +2,7 @@ from __future__ import annotations
 import struct
 from typing import Any, Callable, Optional, Union
 
-from ctx import Ctx, _resolve
+from .ctx import Ctx, _resolve
 
 
 Buffer = Union[bytes, bytearray, memoryview, str]

@@ -1,5 +1,5 @@
-from spec import Spec
-from field import *
+from helios.field import *
+from helios.spec import Spec
 
 MODULE_TYPE = {
     0x00: "Unknown",

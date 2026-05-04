@@ -1,6 +1,6 @@
 from typing import Any, Dict
 
-from field import Buffer, Ctx, Field
+from .field import Buffer, Ctx, Field
 
 
 class Spec:
